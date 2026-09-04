@@ -53,10 +53,10 @@ Logika dari Task 1 disesuaikan dengan menambahkan satu langkah di awal: hari den
 
 Data disimpan dalam dua tabel dengan relasi one-to-many, agar satu kali proses "balancing" (1 transaksi) bisa menyimpan 7 data harian sekaligus:
 
-![Tabel Planning Record](./screenshot/PlanningRecords.png)
+![Tabel Planning Record](./screenshot/planning_record_table.png)
 *tabel planning record berperan sebagai header*
 
-![Tabel Planning Day Record](./screenshot/PlanningDayRecords.png)
+![Tabel Planning Day Record](./screenshot/planning_day_record_table.png)
 *sedangkan tabel planning day record menyimpan rincian per-hari*
 
 ### 4. Alur Aplikasi
