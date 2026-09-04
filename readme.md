@@ -92,3 +92,6 @@ Aplikasi dirancang dengan 2 tab pada satu halaman:
 
 - Source code aplikasi (folder 'aplikasi-asep')
 - Backup database SQL Server (file 'aplikasi_asep_db.bk')
+
+## Task 3
+terlampir di (file 'jawaban_software_engineer_test.docx' beserta Task 1 dan 2)
