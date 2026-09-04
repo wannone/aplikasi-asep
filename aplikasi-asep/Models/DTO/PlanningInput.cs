@@ -1,4 +1,4 @@
-namespace aplikasi_asep.Models.Entities;
+namespace aplikasi_asep.Models.DTO;
 
 public class PlanningInput
 {

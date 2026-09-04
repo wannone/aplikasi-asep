@@ -1,8 +1,7 @@
-@model aplikasi_asep.Models.Entities.PlanningInput
-
+@model aplikasi_asep.Models.DTO.PlanningPageView
 @{
     ViewData["Title"] = "Weekly Production Balancing";
-    var totalValue = Model.Days.Sum(d => d.Value);
+    bool openHistoryTab = Context.Request.Query.ContainsKey("historyPage");
 }
 
 <div class="container py-5">
@@ -10,85 +9,163 @@
         <div class="col-12 col-xl-10">
 
             <div class="text-center mb-4">
-                <h2 class="fw-bold">
-                    Weekly Production Balancing
-                </h2>
+                <h2 class="fw-bold">Weekly Production Balancing</h2>
             </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4 p-lg-5">
+            @if (TempData["SuccessMessage"] is string successMessage)
+            {
+                <div id="successMessage" class="alert alert-success text-center">
+                    @successMessage
+                </div>
+            }
 
-                    <form method="post">
+            <ul class="nav nav-tabs nav-fill" id="planningTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link w-100 link-dark @(openHistoryTab ? "" : "active")" id="input-tab" data-bs-toggle="tab"
+                            data-bs-target="#input-pane" type="button" role="tab">
+                        Input
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link w-100 link-dark @(openHistoryTab ? "active" : "")" id="history-tab" data-bs-toggle="tab"
+                            data-bs-target="#history-pane" type="button" role="tab">
+                        History
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content border border-top-0 rounded-bottom shadow-sm">
+                <div class="tab-pane fade p-4 p-lg-5 @(openHistoryTab ? "" : "show active")" id="input-pane" role="tabpanel">
+
+                    <form method="post" asp-action="Process">
                         <div class="row g-3">
-
-                            @for (int i = 0; i < Model.Days.Count; i++)
+                            @for (int i = 0; i < Model.InputDays.Count; i++)
                             {
                                 <div class="col">
                                     <label class="form-label fw-semibold text-center w-100">
-                                        @Model.Days[i].Day
+                                        @Model.InputDays[i].Day
                                     </label>
-
-                                    <input type="hidden"
-                                           asp-for="Days[i].Day" />
-
-                                    <input type="number"
-                                           asp-for="Days[i].Value"
-                                           class="form-control text-center"
-                                           min="0"
-                                           placeholder="0" />
+                                    <input type="hidden" asp-for="InputDays[i].Day" />
+                                    <input type="number" asp-for="InputDays[i].Value"
+                                           class="form-control text-center" min="0" placeholder="0" />
                                 </div>
                             }
-
                         </div>
 
                         <div class="text-center mt-4">
-                            <button type="submit"
-                                    class="btn btn-dark px-5">
+                            <button type="submit" class="btn btn-dark px-5">
                                 Balance Production
                             </button>
                         </div>
                     </form>
 
-                    @if (Model.Days.Any(d => d.Value > 0))
+                    @if (Model.ResultDays is not null)
                     {
                         <hr class="my-5" />
 
                         <div class="text-center mb-4">
-                            <h4 class="fw-bold mb-2">
-                                Balanced Production Plan
-                            </h4>
-
-                            <div class="text-muted">
-                                Total Weekly Production
-                            </div>
-
-                            <div class="fs-2 fw-bold">
-                                @totalValue
-                            </div>
+                            <h4 class="fw-bold mb-2">Balanced Production Plan</h4>
+                            <div class="text-muted">Total Weekly Production</div>
+                            <div class="fs-2 fw-bold">@Model.ResultDays.Sum(d => d.Value)</div>
                         </div>
 
                         <div class="row g-3">
-
-                            @foreach (var day in Model.Days)
+                            @foreach (var day in Model.ResultDays)
                             {
                                 <div class="col">
-                                    <label class="form-label fw-semibold text-center w-100">
-                                        @day.Day
-                                    </label>
-
-                                    <input type="text"
-                                           value="@day.Value"
-                                           class="form-control text-center"
-                                           disabled />
+                                    <label class="form-label fw-semibold text-center w-100">@day.Day</label>
+                                    <input type="text" value="@day.Value" class="form-control text-center fw-bold" disabled />
                                 </div>
                             }
-
                         </div>
-                    }
 
+                        <form method="post" asp-action="Save" class="text-center mt-4">
+                            @for (int i = 0; i < Model.InputDays.Count; i++)
+                            {
+                                <input type="hidden" name="InputDays[@i].Day" value="@Model.InputDays[i].Day" />
+                                <input type="hidden" name="InputDays[@i].Value" value="@Model.InputDays[i].Value" />
+                            }
+                            @for (int i = 0; i < Model.ResultDays.Count; i++)
+                            {
+                                <input type="hidden" name="ResultDays[@i].Day" value="@Model.ResultDays[i].Day" />
+                                <input type="hidden" name="ResultDays[@i].Value" value="@Model.ResultDays[i].Value" />
+                            }
+
+                            <button type="submit" class="btn btn-success px-5">
+                                Simpan ke Riwayat
+                            </button>
+                        </form>
+                    }
+                </div>
+
+                <div class="tab-pane fade p-4 p-lg-5 @(openHistoryTab ? "show active" : "")" id="history-pane" role="tabpanel">
+                    @if (Model.History.TotalCount == 0)
+                    {
+                        <p class="text-muted text-center mb-0">Belum ada riwayat.</p>
+                    }
+                    else
+                    {
+                        @foreach (var record in Model.History.Items)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    @record.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-bordered text-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                @foreach (var d in record.DayRecords)
+                                                {
+                                                    <th>@d.Day</th>
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                @foreach (var d in record.DayRecords)
+                                                {
+                                                    <td>Asli: @d.OriginalValue</td>
+                                                }
+                                            </tr>
+                                            <tr>
+                                                @foreach (var d in record.DayRecords)
+                                                {
+                                                    <td class="fw-bold">Hasil: @d.ResultValue</td>
+                                                }
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+
+                        <nav aria-label="History pagination">
+                            <ul class="pagination justify-content-center mt-4">
+                                <li class="page-item @(Model.History.CurrentPage == 1 ? "disabled" : "")">
+                                    <a class="page-link link-dark" href="?historyPage=@(Model.History.CurrentPage - 1)#history-pane">Previous</a>
+                                </li>
+
+                                @for (int i = 1; i <= Model.History.TotalPages; i++)
+                                {
+                                    <li class="page-item @(i == Model.History.CurrentPage ? "active" : "")">
+                                        <a class="page-link link-dark" href="?historyPage=@i#history-pane">@i</a>
+                                    </li>
+                                }
+
+                                <li class="page-item @(Model.History.CurrentPage == Model.History.TotalPages ? "disabled" : "")">
+                                    <a class="page-link link-dark" href="?historyPage=@(Model.History.CurrentPage + 1)#history-pane">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    }
                 </div>
             </div>
 
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/index.js"></script>
+}
