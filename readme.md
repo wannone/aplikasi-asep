@@ -94,4 +94,4 @@ Aplikasi dirancang dengan 2 tab pada satu halaman:
 - Backup database SQL Server (file 'aplikasi_asep_db.bk')
 
 ## Task 3
-terlampir di (file 'jawaban_software_engineer_test.docx' beserta Task 1 dan 2)
+terlampir di (file yang dikirimkan beserta Task 1 dan 2)
