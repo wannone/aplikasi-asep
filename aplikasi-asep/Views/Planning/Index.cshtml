@@ -1,0 +1,94 @@
+@model aplikasi_asep.Models.Entities.PlanningInput
+
+@{
+    ViewData["Title"] = "Weekly Production Balancing";
+    var totalValue = Model.Days.Sum(d => d.Value);
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">
+                    Weekly Production Balancing
+                </h2>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-lg-5">
+
+                    <form method="post">
+                        <div class="row g-3">
+
+                            @for (int i = 0; i < Model.Days.Count; i++)
+                            {
+                                <div class="col">
+                                    <label class="form-label fw-semibold text-center w-100">
+                                        @Model.Days[i].Day
+                                    </label>
+
+                                    <input type="hidden"
+                                           asp-for="Days[i].Day" />
+
+                                    <input type="number"
+                                           asp-for="Days[i].Value"
+                                           class="form-control text-center"
+                                           min="0"
+                                           placeholder="0" />
+                                </div>
+                            }
+
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit"
+                                    class="btn btn-dark px-5">
+                                Balance Production
+                            </button>
+                        </div>
+                    </form>
+
+                    @if (Model.Days.Any(d => d.Value > 0))
+                    {
+                        <hr class="my-5" />
+
+                        <div class="text-center mb-4">
+                            <h4 class="fw-bold mb-2">
+                                Balanced Production Plan
+                            </h4>
+
+                            <div class="text-muted">
+                                Total Weekly Production
+                            </div>
+
+                            <div class="fs-2 fw-bold">
+                                @totalValue
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+
+                            @foreach (var day in Model.Days)
+                            {
+                                <div class="col">
+                                    <label class="form-label fw-semibold text-center w-100">
+                                        @day.Day
+                                    </label>
+
+                                    <input type="text"
+                                           value="@day.Value"
+                                           class="form-control text-center"
+                                           disabled />
+                                </div>
+                            }
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

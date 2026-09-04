@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("aplikasi-asep")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34d6191741f3a7b996a5f8e7bbe6cc208d8a5189")]
 [assembly: System.Reflection.AssemblyProductAttribute("aplikasi-asep")]
 [assembly: System.Reflection.AssemblyTitleAttribute("aplikasi-asep")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
